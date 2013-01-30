@@ -2,14 +2,28 @@ import gzip
 
 class Vocab(object):
     '''Maps strings to integers and vice versa.'''
-    def __init__(self):
+    def __init__(self, sos='<s>', eos='</s>', unk='<unk>'):
         self._word_to_int = {}
         self._int_to_word = []
         self._frozen = False
+        self._reserved = (sos, eos, unk)
+        for w in self._reserved:
+            self[w]
 
     def freeze(self):
         '''vocab.freeze() -> no more words can be added'''
         self._frozen = True
+
+    def reserved_tokens(self):
+        '''vocab.reserved_tokens() -> (sos, eos, unk)
+        
+        where:
+            - sos is the start of sentence marker for this vocab
+            - eos is the eos of sentence marker for this vocab
+            - unk is the unk marker for this vocab
+
+        '''
+        return self._reserved
 
     def __getitem__(self, key):
         '''vocab[string] -> integer | vocab[index] -> string'''
@@ -35,7 +49,7 @@ class Vocab(object):
     def __repr__(self):
         return 'Vocab(#words={0}, frozen={self._frozen})'.format(len(self), self=self)
 
-def corpus_from_txt(filename):
+def from_txt(filename):
     '''corpus_from_text(filename) -> (corpus, vocab)
 
     Corpus is a list of lists of word IDs. Word IDs can be looked up
@@ -49,7 +63,7 @@ def corpus_from_txt(filename):
         c.append([v[w] for w in words])
     return c, v
 
-def corpus_from_gzip(filename):
+def from_gzip(filename):
     '''corpus_from_gzip(filename) -> (corpus, vocab)
 
     Corpus is a list of lists of word IDs. Word IDs can be looked up
