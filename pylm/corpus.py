@@ -1,4 +1,5 @@
 import gzip
+import itertools
 
 class Vocab(object):
     '''Maps strings to integers and vice versa.'''
