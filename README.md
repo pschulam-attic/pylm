@@ -1,4 +1,4 @@
 pylm
 ====
 
-Python interface to the SRLIM toolkit.
+Python library for language modeling.
