@@ -5,6 +5,11 @@ class Vocab(object):
     def __init__(self):
         self._word_to_int = {}
         self._int_to_word = []
+        self._frozen = False
+
+    def freeze(self):
+        '''vocab.freeze() -> no more words can be added'''
+        self._frozen = True
 
     def __getitem__(self, key):
         '''vocab[string] -> integer | vocab[index] -> string'''
@@ -28,7 +33,7 @@ class Vocab(object):
         return len(self._int_to_word)
 
     def __repr__(self):
-        return 'Vocab(#words={0})'.format(len(self))
+        return 'Vocab(#words={0}, frozen={self._frozen})'.format(len(self), self=self)
 
 def corpus_from_txt(filename):
     '''corpus_from_text(filename) -> (corpus, vocab)
