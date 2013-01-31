@@ -1,10 +1,18 @@
+import numpy as np
 from collections import Counter
 
-class NGramStats(object):
+class NGramCounts(object):
     '''Maintains counts of n-grams.'''
-    def __init__(self, order):
+    def __init__(self, vocab, order, storage_type=np.uint16):
         self.order = order
-        self.counts = Counter()
+        self.V = len(vocab)
+        dimension = tuple([V] * order)
+        self.counts = np.zeros(dimension, dtype=storage_type)
+
+    def count(self, ngram_iterable):
+        '''ngramcounts.count(ngram_iterable) -> count all ngrams in this stream'''
+        for ngram in ngram_iterable:
+            self.increment(ngram)
 
     def increment(self, ngram):
         '''stats.increment(ngram) -> increment occurrences of ngram'''
@@ -25,31 +33,4 @@ class NGramStats(object):
         return self.counts[ngram]
 
     def __repr__(self):
-        return 'NGramStats(order={self.order}, #ngrams={n})'.format(self=self, n=len(self.counts))
-
-def from_sequence(seq, vocab, order):
-    '''from_sequence(seq, order) -> list of n-grams for this sequence
-
-    Pads the beginning of the sequence with order-1 start of sentence
-    markers, and 1 end of sentence marker. These markers are found in
-    the vocab passed as an argument.
-
-    '''
-    sos, eos, _ = vocab.reserved_tokens()
-    sos_idx, eos_idx = vocab[sos], vocab[eos]
-    seq = list(seq)
-    seq.append(eos_idx)
-    seq = ([sos_idx]*(order-1)) + seq
-
-    ngrams = []
-    for i in xrange(len(seq)-order):
-        ngrams.append(tuple(seq[i:i+order]))
-    return ngrams
-
-def compute_stats(corpus, vocab, order):
-    '''compute_stats(corpus, vocab, order) -> NGramStats with counts of ngrams of order from corpus'''
-    stats = NGramStats(order)
-    for doc in corpus:
-        for ngram in from_sequence(doc, vocab, order):
-            stats.increment(ngram)
-    return stats
+        return 'NGramStats(vocab_size={self.V}, order={self.order}, total_count={total})'.format(self=self, n=len(self.counts), total=np.sum(self.counts))
