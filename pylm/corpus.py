@@ -1,5 +1,5 @@
 import gzip
-import itertools
+import numpy as np
 
 class Vocab(object):
     '''Maps strings to integers and vice versa.'''
@@ -26,12 +26,24 @@ class Vocab(object):
         '''
         return self._reserved
 
+    def sos(self):
+        return self._reserved[0]
+
+    def eos(self):
+        return self._reserved[1]
+    
+    def unk(self):
+        return self._reserved[2]
+
     def __getitem__(self, key):
         '''vocab[string] -> integer | vocab[index] -> string'''
         wti = self._word_to_int
         itw = self._int_to_word
+        unk = self.unk()
         if isinstance(key, str):
-            if key not in wti:
+            if self._frozen:
+                return wti[unk]
+            elif key not in wti:
                 wti[key] = len(self)
                 itw.append(key)
             return wti[key]
@@ -50,30 +62,34 @@ class Vocab(object):
     def __repr__(self):
         return 'Vocab(#words={0}, frozen={self._frozen})'.format(len(self), self=self)
 
+class Corpus(object):
+    '''Contains data read from a corpus file.'''
+    def __init__(self, readable_object, vocab=None, storage_type=np.uint16):
+        '''reads lines from readable_object and splits on whitespace
+        to get words. If no vocab is given, a new vocab is created and
+        stored with this corpus.
+
+        '''
+        self._vocab = vocab if vocab else Vocab()
+        self._data = []
+        for line in readable_object:
+            words = line.strip().split()
+            a = np.array([self._vocab[w] for w in words], dtype=storage_type)
+            self._data.append(a)
+        self._vocab.freeze()
+        self._ntokens = sum(len(a) for a in self._data)
+
+    def __repr__(self):
+        return 'Corpus(#documents={0}, #tokens={1}, #types={2})'.format(len(self._data), self._ntokens, len(self._vocab))
+
 def from_txt(filename):
-    '''corpus_from_text(filename) -> (corpus, vocab)
-
-    Corpus is a list of lists of word IDs. Word IDs can be looked up
-    in vocab.
-
-    '''
-    v = Vocab()
-    c = []
-    for line in open(filename):
-        words = line.strip().split()
-        c.append([v[w] for w in words])
-    return c, v
+    '''corpus_from_text(filename) -> new corpus object'''
+    with open(filename) as f:
+        c = Corpus(f)
+    return c
 
 def from_gzip(filename):
-    '''corpus_from_gzip(filename) -> (corpus, vocab)
-
-    Corpus is a list of lists of word IDs. Word IDs can be looked up
-    in vocab.
-
-    '''
-    v = Vocab()
-    c = []
-    for line in gzip.open(filename):
-        words = line.strip().split()
-        c.append([v[w] for w in words])
-    return c, v
+    '''corpus_from_gzip(filename) -> new corpus object'''
+    with gzip.open(filename) as f:
+        c = Corpus(f)
+    return c
