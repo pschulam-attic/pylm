@@ -3,9 +3,9 @@ from collections import Counter
 
 class NGramCounts(object):
     '''Maintains counts of n-grams.'''
-    def __init__(self, vocab, order, storage_type=np.uint16):
+    def __init__(self, vocab_size, order, storage_type=np.uint16):
         self.order = order
-        self.V = len(vocab)
+        self.V = vocab_size
         dimension = tuple([V] * order)
         self.counts = np.zeros(dimension, dtype=storage_type)
 
@@ -34,3 +34,9 @@ class NGramCounts(object):
 
     def __repr__(self):
         return 'NGramStats(vocab_size={self.V}, order={self.order}, total_count={total})'.format(self=self, n=len(self.counts), total=np.sum(self.counts))
+
+def counts_from_corpus(corpus, order):
+    '''counts_from_corpus(corpus) -> NgramCounts object with counts from corpus'''
+    counts = NGramCounts(corpus.num_types(), order)
+    counts.count(corpus.ngrams(order))
+    return counts
