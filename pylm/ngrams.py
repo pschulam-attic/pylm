@@ -6,7 +6,7 @@ class NGramCounts(object):
     def __init__(self, vocab_size, order, storage_type=np.uint16):
         self.order = order
         self.V = vocab_size
-        dimension = tuple([V] * order)
+        dimension = tuple([self.V] * order)
         self.counts = np.zeros(dimension, dtype=storage_type)
 
     def count(self, ngram_iterable):

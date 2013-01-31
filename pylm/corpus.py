@@ -91,8 +91,8 @@ class Corpus(object):
         for doc in self._data:
             words = list(doc)
             v = self._vocab
-            words.append(v[w.eos()])
-            words = ([v[w.sos()]] * (order-1)) + words
+            words.append(v[v.eos()])
+            words = ([v[v.sos()]] * (order-1)) + words
             for i in xrange(len(words)-order):
                 yield tuple(words[i:i+order])
 

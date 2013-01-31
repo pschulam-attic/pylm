@@ -5,3 +5,4 @@ def log2(x):
 
 def log10(x):
     return math.log(x, 10)
+
