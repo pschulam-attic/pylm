@@ -76,7 +76,8 @@ class Corpus(object):
             words = line.strip().split()
             a = np.array([self._vocab[w] for w in words], dtype=storage_type)
             self._data.append(a)
-        self._vocab.freeze()
+        if not vocab:
+            self._vocab.freeze()
         self._ntokens = sum(len(a) for a in self._data)
 
     def ngrams(self, order):
@@ -94,6 +95,19 @@ class Corpus(object):
             words = ([v[w.sos()]] * (order-1)) + words
             for i in xrange(len(words)-order):
                 yield tuple(words[i:i+order])
+
+    def num_types(self):
+        return len(self._vocab)
+
+    def num_tokens(self):
+        return self._ntokens
+    
+    def num_docs(self):
+        return len(self._data)
+
+    def spawn_corpus(self, readable_object):
+        '''corpus.spawn_corpus(readable_object) -> a new Corpus object with the same vocab but different data'''
+        return Corpus(readable_object, vocab=self._vocab)
 
     def __repr__(self):
         return 'Corpus(#documents={0}, #tokens={1}, #types={2})'.format(len(self._data), self._ntokens, len(self._vocab))
