@@ -79,6 +79,22 @@ class Corpus(object):
         self._vocab.freeze()
         self._ntokens = sum(len(a) for a in self._data)
 
+    def ngrams(self, order):
+        '''corpus.ngrams(order) -> iterable over all ngrams of order from this corpus
+
+        This method generates the ngrams lazily, so if you want them
+        all at once, you should explicitly convert the iterable to a
+        list.
+
+        '''
+        for doc in self._data:
+            words = list(doc)
+            v = self._vocab
+            words.append(v[w.eos()])
+            words = ([v[w.sos()]] * (order-1)) + words
+            for i in xrange(len(words)-order):
+                yield tuple(words[i:i+order])
+
     def __repr__(self):
         return 'Corpus(#documents={0}, #tokens={1}, #types={2})'.format(len(self._data), self._ntokens, len(self._vocab))
 
