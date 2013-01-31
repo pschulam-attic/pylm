@@ -1,4 +1,4 @@
-from external.kenlm import LanguageModel
+from kenlm import LanguageModel
 
 class ArpaQueryer(object):
     '''Answers probability queries using an arpa n-gram model.'''
