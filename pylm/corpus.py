@@ -17,7 +17,7 @@ class Vocab(object):
 
     def reserved_tokens(self):
         '''vocab.reserved_tokens() -> (sos, eos, unk)
-        
+
         where:
             - sos is the start of sentence marker for this vocab
             - eos is the eos of sentence marker for this vocab
@@ -31,7 +31,7 @@ class Vocab(object):
 
     def eos(self):
         return self._reserved[1]
-    
+
     def unk(self):
         return self._reserved[2]
 
@@ -101,7 +101,7 @@ class Corpus(object):
 
     def num_tokens(self):
         return self._ntokens
-    
+
     def num_docs(self):
         return len(self._data)
 
