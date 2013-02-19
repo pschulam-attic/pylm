@@ -46,6 +46,7 @@ class SRILMWrapper(object):
                       vocab=self._vocab,
                       ngram=self._ngram,
                       discount=discount)
+        sentences = (' '.join(s) for s in sentences)
         p = sp.Popen(cmd, shell=True, stdin=sp.PIPE)
         p.communicate('\n'.join(sentences))
         self._trained = True
