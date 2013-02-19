@@ -17,7 +17,7 @@ def run_sampler(model, identifiers, n_iter):
         #if it % 10 == 0:
         logging.info('Model: %s', model)
         ll = model.log_likelihood()
-        ppl = math.exp(-ll / n_identifiers)
+        ppl = 2**(-ll / n_identifiers)
         logging.info('LL=%.0f ppl=%.3f', ll, ppl)
 
 def main():
@@ -35,7 +35,7 @@ def main():
         _, identifiers = corpus.read(f)
 
     char_lm = SRILMWrapper()
-    char_lm.train(identifiers, args.char_lm_order, 'wbdiscount')
+    char_lm.train(set(identifiers), args.char_lm_order, 'wbdiscount')
     base = CharLM(char_lm.ngram_file)
     assert args.strength > - args.discount
     model = PYP(args.discount, args.strength, base)

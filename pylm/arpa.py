@@ -1,3 +1,4 @@
+import math
 import os
 import subprocess as sp
 import kenlm
@@ -13,8 +14,8 @@ class ArpaLM(object):
         sentence = ' '.join(context) + ' ' + word
         return 10**self.lm.full_scores(sentence)[-1][0]
 
-    def log10_likelihood(self, sentence):
-        return self.lm.score(' '.join(sentence))
+    def log_likelihood(self, sentence):
+        return self.lm.score(' '.join(sentence)) / math.log(2, 10)
 
     def __repr__(self):
         return 'ArpaLM(order={self.lm.order})'.format(self=self)

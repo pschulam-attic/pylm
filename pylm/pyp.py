@@ -96,7 +96,7 @@ class PYP(CRP):
                   + self.ntables * (math.log(self.d) - math.lgamma(1 - self.d))
                   + sum(math.lgamma(c - self.d) for tables in self.tables.itervalues()
                         for c in tables))
-        return ll
+        return ll / math.log(2)
 
     def __repr__(self):
         return 'PYP(d={self.d}, theta={self.theta}, #dishes={V}, #tables={self.ntables}, #customers={self.total_customers})'.format(V=len(self.tables), self=self)
