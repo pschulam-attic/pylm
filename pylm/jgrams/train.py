@@ -10,15 +10,15 @@ import corpus
 def run_sampler(model, identifiers, n_iter):
     n_identifiers = len(identifiers)
     for it in range(n_iter):
-        logging.info('Iteration %d/%d', it+1, n_iter)
+        logging.info('Iteration %d/%d', it, n_iter)
         for iden in identifiers:
             if it > 0: model.decrement(iden)
             model.increment(iden)
-        if not it or (it+1) % 10 == 0:
-            logging.info('Model: %s', model)
-            ll = model.log_likelihood()
-            ppl = math.exp(-ll / n_identifiers)
-            logging.info('LL=%.0f ppl=%.3f', ll, ppl)
+        #if it % 10 == 0:
+        logging.info('Model: %s', model)
+        ll = model.log_likelihood()
+        ppl = math.exp(-ll / n_identifiers)
+        logging.info('LL=%.0f ppl=%.3f', ll, ppl)
 
 def main():
     logging.basicConfig(level=logging.INFO, format='%(message)s')
@@ -39,7 +39,7 @@ def main():
     base = CharLM(char_lm.ngram_file)
     assert args.strength > - args.discount
     model = PYP(args.discount, args.strength, base)
-    run_sampler(model, identifiers, args.n_iter)
+    run_sampler(model, identifiers, args.niter)
 
 if __name__ == '__main__':
     main()

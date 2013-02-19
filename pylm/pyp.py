@@ -99,4 +99,4 @@ class PYP(CRP):
         return ll
 
     def __repr__(self):
-        return 'PYP(d={self.d}, theta={self.theta})'.format(self=self)
+        return 'PYP(d={self.d}, theta={self.theta}, #dishes={V}, #tables={self.ntables}, #customers={self.total_customers})'.format(V=len(self.tables), self=self)
